@@ -1,0 +1,71 @@
+import java.util.HashMap;
+import java.util.Scanner;
+
+public class LinkShortener {
+    private HashMap<String, String> linkMap; // Store shortURL -> longURL mappings
+    private static final String BASE62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private int idCounter;
+
+    public LinkShortener() {
+        linkMap = new HashMap<>();
+        idCounter = 1; // Starting ID for generating short URLs
+    }
+
+    public String shortenURL(String longURL) {
+        String shortURL = generateShortURL(longURL);
+        linkMap.put(shortURL, longURL);
+        return shortURL;
+    }
+
+    public String getLongURL(String shortURL) {
+        return linkMap.get(shortURL);
+    }
+
+    private String generateShortURL(String longURL) {
+        // Simulating base conversion using ID
+        StringBuilder shortURL = new StringBuilder();
+        int id = idCounter++;
+        while (id > 0) {
+            shortURL.insert(0, BASE62.charAt(id % 62));
+            id /= 62;
+        }
+        return shortURL.toString();
+    }
+
+    public static void main(String[] args) {
+        LinkShortener linkShortener = new LinkShortener();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Enter 1 to shorten a URL, 2 to retrieve a URL, or 0 to exit:");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 0:
+                    scanner.close();
+                    System.out.println("Exiting...");
+                    return;
+                case 1:
+                    System.out.println("Enter a long URL:");
+                    String longURL = scanner.nextLine();
+                    String shortURL = linkShortener.shortenURL(longURL);
+                    System.out.println("Shortened URL: " + shortURL);
+                    break;
+                case 2:
+                    System.out.println("Enter a short URL:");
+                    String inputShortURL = scanner.nextLine();
+                    String retrievedURL = linkShortener.getLongURL(inputShortURL);
+                    if (retrievedURL != null) {
+                        System.out.println("Retrieved URL: " + retrievedURL);
+                    } else {
+                        System.out.println("Short URL not found.");
+                    }
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+}
